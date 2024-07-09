@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Custom CSS -->
+</head>
+<body>
+    <div class="container">
+        <h1>QR Code Generator</h1>
+        <div class="form-group">
+            <label for="text">Enter text or URL:</label>
+            <input type="text" id="text" class="form-control" placeholder="Enter text or URL">
+        </div>
+        <button class="btn btn-primary btn-block" onclick="generateQRCode()">Generate QR Code</button>
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <div class="qr-code-container">
+            <img id="qrCode" src="" alt="QR Code" class="img-fluid">
+            <a id="downloadBtn" class="btn btn-success" download="qrcode.png">Download QR Code</a>
+        </div>
+    </div>
+    <script>
+        function generateQRCode() {
+            const text = document.getElementById('text').value;
+            if (!text) {
+                alert('Please enter text to generate QR code');
+                return;
+            }
+            document.querySelector('.spinner-border').style.display = 'block';
+            document.getElementById('qrCode').style.display = 'none';
+            document.getElementById('downloadBtn').style.display = 'none';
+            fetch(`/generate?text=${encodeURIComponent(text)}`)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('qrCode').src = data;
+                    document.getElementById('qrCode').style.display = 'block';
+                    document.querySelector('.spinner-border').style.display = 'none';
+                    document.getElementById('downloadBtn').href = data;
+                    document.getElementById('downloadBtn').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.querySelector('.spinner-border').style.display = 'none';
+                });
+        }
+    </script>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
